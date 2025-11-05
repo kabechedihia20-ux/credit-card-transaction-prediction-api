@@ -1,0 +1,6 @@
+<h1><%= utilisateur.name %></h1>
+<p>Email: <%= utilisateur.email %></p>
+<a href="/utilisateur">Retour</a>
+<form action="/utilisateur/<%= utilisateur.id %>?_method=DELETE" method="POST">
+  <button type="submit">Supprimer</button>
+</form>
