@@ -3,6 +3,8 @@ import express from "express";
 import dotenv from "dotenv";
 import sequelize from "./config/database.js";
 import utilisateurRouter from "./routes/utilisateur.route.js";
+import authRouter from "./routes/auth.route.js";
+
 
 dotenv.config();
 
@@ -19,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes principales
 app.use("/utilisateurs", utilisateurRouter);
+app.use("/auth", authRouter);
 
 // Route d'accueil
 app.get("/", (req, res) => {

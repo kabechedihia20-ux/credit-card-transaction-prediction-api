@@ -14,18 +14,27 @@ const Utilisateur = sequelize.define(
     nom: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      field: "nom", 
+      field: "nom",
+      validate: {
+        notEmpty: true
+      }
     },
     prenom: {
       type: DataTypes.STRING(100),
       allowNull: false,
       field: "prenom",
+      validate: {
+        notEmpty: true
+      }
     },
     adresseEmail: {
       type: DataTypes.STRING(255),
       allowNull: false,
       unique: true,
       field: "adresse_email",
+      validate: {
+        notEmpty: true
+      }
     },
     telephone: {
       type: DataTypes.STRING(20),
@@ -36,6 +45,9 @@ const Utilisateur = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
       field: "mot_de_passe",
+      validate: {
+        notEmpty: true
+      }
     },
     dateCreation: {
       type: DataTypes.DATE,
