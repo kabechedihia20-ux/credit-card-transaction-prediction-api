@@ -1,23 +1,53 @@
+// models/Utilisateur.js
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
-const Utilisateur = sequelize.define('Utilisateur', {
-  idUtilisateur: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  nom: { type: DataTypes.STRING, allowNull: false },
-  prenom: { type: DataTypes.STRING, allowNull: false },
-  adresseEmail: { type: DataTypes.STRING, allowNull: false, unique: true },
-  telephone: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    validate: {
-      len: [10, 20], 
-    }
+const Utilisateur = sequelize.define(
+  "Utilisateur",
+  {
+    idUtilisateur: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      field: "id_utilisateur", 
+    },
+    nom: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      field: "nom", 
+    },
+    prenom: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      field: "prenom",
+    },
+    adresseEmail: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+      field: "adresse_email",
+    },
+    telephone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      field: "telephone",
+    },
+    motDePasse: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: "mot_de_passe",
+    },
+    dateCreation: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+      field: "date_creation",
+    },
   },
-  motDePasse: { type: DataTypes.STRING, allowNull: false },
-  dateCreation: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, {
-  tableName: 'utilisateurs',
-  timestamps: true
-});
+  {
+    tableName: "utilisateurs", 
+    timestamps: false, 
+  }
+);
 
 export default Utilisateur;

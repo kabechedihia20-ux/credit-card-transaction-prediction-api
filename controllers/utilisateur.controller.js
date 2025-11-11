@@ -1,55 +1,123 @@
 import Utilisateur from "../models/Utilisateur.js";
+import { Op } from "sequelize";
 
-// Get all utilisateur
+
+// Obtenir tous les utilisateurs
 export const getUtilisateurs = async (req, res) => {
   try {
-    const utilisateurs = await Utilisateur.findAll();
-    res.json(utilisateurs);
-    res.render('utilisateurs', { utilisateurs });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Parametres de pagination: /utilisateur?page=2&limit=5
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
+    // Parametre de recherche optionnel: /utilisateur?search=julie
+    const search = req.query.search || "";
+    const where = {};
+
+    if (search) {
+      where[Op.or] = [
+        { nom: { [Op.like]: `%${search}%` } },
+        { prenom: { [Op.like]: `%${search}%` } },
+        { adresseEmail: { [Op.like]: `%${search}%` } }
+      ];
+    }
+
+    const { rows, count } = await Utilisateur.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [["idUtilisateur", "ASC"]]
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({
+      data: rows,
+      page,
+      limit,
+      totalItems: count,
+      totalPages
+    });
+  } catch (error) {
+    console.error("Erreur getUtilisateurs :", error);
+    res.status(500).json({ error: "Erreur lors de la récupération des utilisateurs." });
   }
 };
 
-// Create Utilisateur
+// Créer un nouvel utilisateur
 export const createUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.create(req.body);
-    res.status(201).json(utilisateur);
-    res.redirect('/utilisateur');
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+try {
+  const data = req.body;
+
+  // Si on reçoit un tableau → insertion multiple
+  if (Array.isArray(data)) {
+    const utilisateurs = await Utilisateur.bulkCreate(data);
+    res.status(201).json({
+      message: `${utilisateurs.length} utilisateurs créés avec succès.`,
+      utilisateurs,
+    });
+  } 
+  // Sinon → insertion unique
+  else {
+    const utilisateur = await Utilisateur.create(data);
+    res.status(201).json({
+      message: "Utilisateur créé avec succès.",
+      utilisateur,
+    });
+  }
+  }  catch (error) {
+    console.error("Erreur createUtilisateur :", error);
+    res.status(400).json({ error: "Erreur lors de la création de l'utilisateur." });
   }
 };
 
+// Obtenir un utilisateur par ID
 export const getUtilisateurById = async (req, res) => {
   try {
     const utilisateur = await Utilisateur.findByPk(req.params.id);
-    if (!utilisateur) return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    res.json(utilisateur);
-    res.render('utilisateurDetail', { utilisateur });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (!utilisateur) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    }
+    res.status(200).json(utilisateur);
+  } catch (error) {
+    console.error("Erreur getUtilisateurById :", error);
+    res.status(500).json({ error: "Erreur lors de la récupération de l'utilisateur." });
   }
 };
 
+// Mettre à jour un utilisateur
 export const updateUtilisateur = async (req, res) => {
   try {
-    const [updated] = await Utilisateur.update(req.body, { where: { id: req.params.id } });
-    if (!updated) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    const [updated] = await Utilisateur.update(req.body, {
+      where: { idUtilisateur: req.params.id },
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    }
+
     const utilisateur = await Utilisateur.findByPk(req.params.id);
-    res.json(utilisateur);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(200).json(utilisateur);
+  } catch (error) {
+    console.error("Erreur updateUtilisateur :", error);
+    res.status(400).json({ error: "Erreur lors de la mise à jour de l'utilisateur." });
   }
 };
 
+// Supprimer un utilisateur
 export const deleteUtilisateur = async (req, res) => {
   try {
-    const deleted = await Utilisateur.destroy({ where: { id: req.params.id } });
-    if (!deleted) return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    res.json({ message: 'Utilisateur supprimé' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const deleted = await Utilisateur.destroy({
+      where: { idUtilisateur: req.params.id },
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Utilisateur non trouvé." });
+    }
+
+    res.status(200).json({ message: "Utilisateur supprimé avec succès." });
+  } catch (error) {
+    console.error("Erreur deleteUtilisateur :", error);
+    res.status(500).json({ error: "Erreur lors de la suppression de l'utilisateur." });
   }
 };

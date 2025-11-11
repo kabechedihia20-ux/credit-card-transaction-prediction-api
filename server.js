@@ -1,46 +1,43 @@
-// Server.js
-import express from 'express';
-import sequelize from './config/database.js';
-import utilisateurRouter from './routes/utilisateur.route.js';
+// server.js
+import express from "express";
+import dotenv from "dotenv";
+import sequelize from "./config/database.js";
+import utilisateurRouter from "./routes/utilisateur.route.js";
+
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Middleware pour parler le JSON
+// Middleware pour lire le JSON et les formulaires
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Integration des Routes
-app.use('/utilisateur', utilisateurRouter);
+// View Engine (optionnel pour la partie API)
+// app.set("view engine", "ejs");
+// app.set("views", "./view");
 
-// View engine - Pour les vues (front-end)
-app.set('view engine', 'ejs');
-app.set('views', './view');
-app.use(express.urlencoded({ extended: true })); // Pour les formulaires
+// Routes principales
+app.use("/utilisateurs", utilisateurRouter);
 
-
-// Main URL
-// Route de base (GET)
-app.get('/', (req, res) => {
-  res.send('Bonjour, monde !');
+// Route d'accueil
+app.get("/", (req, res) => {
+  res.json({ message: "Bienvenue sur l'API de détection de fraude" });
 });
 
-// Démarrer le serveur
-app.listen(port, () => {
-  console.log(`Serveur en cours d'exécution sur http://localhost:${port}`);
-});
+// Démarrage du serveur après connexion à la base de données
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connexion à la base de données réussie");
+    await sequelize.sync();
 
+    app.listen(port, () => {
+      console.log(`Serveur démarré sur http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Erreur de connexion à la base de données :", error);
+  }
+};
 
-
-// Test connexion bd
-
-// async function dbAuth() {
-//   try {
-//     await sequelize.authenticate();
-//     console.log('Connexion executee avec succes!');
-//   } catch (error) {
-//     console.error('Erreur de connexion!', error);
-//   }
-// }
-
-// dbAuth();
-
+startServer();
