@@ -12,6 +12,7 @@ import roleRouter from "./routes/role.route.js";
 import userRoleRouter from "./routes/userRole.route.js";
 
 import "./models/associations.js";
+import { swaggerSpec, swaggerUiMiddleware } from "./config/swagger.js"; // Ajout de docs avec swagger js
 
 
 dotenv.config();
@@ -22,6 +23,7 @@ const port = process.env.PORT || 3000;
 // Middleware pour lire le JSON et les formulaires
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api-docs", swaggerUiMiddleware.serve, swaggerUiMiddleware.setup(swaggerSpec));
 
 // View Engine (optionnel pour la partie API)
 // app.set("view engine", "ejs");

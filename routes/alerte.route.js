@@ -7,3 +7,22 @@ const alerteRouter = express.Router();
 alerteRouter.get("/", verifyToken, getAlertes);
 
 export default alerteRouter;
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Alertes
+ *   description: Alertes générées par le système
+ */
+
+/**
+ * @swagger
+ * /alerte:
+ *   get:
+ *     summary: Récupérer toutes les alertes
+ *     tags: [Alertes]
+ *     security:
+ *       - bearerAuth: []
+ */

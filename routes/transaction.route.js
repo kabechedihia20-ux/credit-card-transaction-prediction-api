@@ -27,3 +27,35 @@ transactionRouter.put("/:id", verifyToken, updateTransaction);
 transactionRouter.delete("/:id", verifyToken, deleteTransaction);
 
 export default transactionRouter;
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Transactions
+ *   description: Gestion des transactions bancaires
+ */
+
+/**
+ * @swagger
+ * /transaction:
+ *   post:
+ *     summary: Créer une transaction
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: Transaction créée
+ */
+
+/**
+ * @swagger
+ * /transaction:
+ *   get:
+ *     summary: Lister les transactions
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ */

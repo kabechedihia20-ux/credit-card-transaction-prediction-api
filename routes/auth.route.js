@@ -18,3 +18,41 @@ authRouter.post(
 authRouter.post("/login", login);
 
 export default authRouter;
+
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Gestion de l'authentification
+ */
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Connexion utilisateur
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               adresseEmail: { type: string }
+ *               motDePasse: { type: string }
+ *     responses:
+ *       200:
+ *         description: Token généré
+ */
+
+/**
+ * @swagger
+ * /auth/signup:
+ *   post:
+ *     summary: Inscription utilisateur
+ *     tags: [Auth]
+ */

@@ -39,3 +39,44 @@ utilisateurRouter.put(
 utilisateurRouter.delete('/:id', deleteUtilisateur);
 
 export default utilisateurRouter;
+
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Utilisateurs
+ *   description: Gestion des utilisateurs
+ */
+
+/**
+ * @swagger
+ * /utilisateur:
+ *   get:
+ *     summary: Récupérer tous les utilisateurs
+ *     tags: [Utilisateurs]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des utilisateurs
+ */
+
+/**
+ * @swagger
+ * /utilisateur/{id}:
+ *   get:
+ *     summary: Récupérer un utilisateur par ID
+ *     tags: [Utilisateurs]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema: { type: integer }
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Utilisateur trouvé
+ */
