@@ -13,10 +13,12 @@ import {
   handleValidationErrors,
 } from "../middleware/validateUtilisateur.js";
 
+import { verifyToken } from "../middleware/auth.middleware.js";
+
 const utilisateurRouter = express.Router();
 
 // Routes CRUD pour les utilisateurs
-utilisateurRouter.get('/', getUtilisateurs);
+utilisateurRouter.get('/', verifyToken, getUtilisateurs);
 
 utilisateurRouter.post(
   "/",
@@ -25,7 +27,7 @@ utilisateurRouter.post(
   createUtilisateur
 );
 
-utilisateurRouter.get('/:id', getUtilisateurById);
+utilisateurRouter.get('/:id', verifyToken, getUtilisateurById);
 
 utilisateurRouter.put(
   "/:id",

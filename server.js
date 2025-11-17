@@ -2,8 +2,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import sequelize from "./config/database.js";
+
 import utilisateurRouter from "./routes/utilisateur.route.js";
+import transactionRouter from "./routes/transaction.route.js";
 import authRouter from "./routes/auth.route.js";
+
+import "./models/associations.js";
 
 
 dotenv.config();
@@ -20,7 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 // app.set("views", "./view");
 
 // Routes principales
-app.use("/utilisateurs", utilisateurRouter);
+app.use("/utilisateur", utilisateurRouter);
+app.use("/transaction", transactionRouter);
 app.use("/auth", authRouter);
 
 // Route d'accueil
