@@ -6,6 +6,10 @@ import sequelize from "./config/database.js";
 import utilisateurRouter from "./routes/utilisateur.route.js";
 import transactionRouter from "./routes/transaction.route.js";
 import authRouter from "./routes/auth.route.js";
+import analyseRouter from "./routes/analyse.route.js";
+import alerteRouter from "./routes/alerte.route.js";
+import roleRouter from "./routes/role.route.js";
+import userRoleRouter from "./routes/userRole.route.js";
 
 import "./models/associations.js";
 
@@ -26,6 +30,10 @@ app.use(express.urlencoded({ extended: true }));
 // Routes principales
 app.use("/utilisateur", utilisateurRouter);
 app.use("/transaction", transactionRouter);
+app.use("/analyse", analyseRouter);
+app.use("/alerte", alerteRouter);
+app.use("/role", roleRouter);
+app.use("/user-role", userRoleRouter);
 app.use("/auth", authRouter);
 
 // Route d'accueil

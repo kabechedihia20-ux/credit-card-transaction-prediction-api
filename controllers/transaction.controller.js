@@ -2,6 +2,7 @@
 import { Op } from "sequelize";
 import Transaction from "../models/Transaction.js";
 import Utilisateur from "../models/Utilisateur.js";
+import { analyserTransaction } from "./analyse.controller.js"; // Generer l'analyse automatiquement
 
 
 // GET /transaction
@@ -97,29 +98,35 @@ export const createTransaction = async (req, res) => {
   try {
     const data = req.body;
 
-    // 1) Si le body est un tableau : création en masse
+    // Plusieurs transactions à la fois
     if (Array.isArray(data)) {
       const transactions = await Transaction.bulkCreate(data);
+
+      // analyser chaque transaction
+      for (let t of transactions) {
+        await analyserTransaction(t);
+      }
+
       return res.status(201).json({
         message: "Transactions créées avec succès.",
         transactions
       });
     }
 
-    // 2) Sinon : création d'une seule transaction
+    // Une seule transaction
     const transaction = await Transaction.create(data);
 
+    // Analyse automatique
+    const analyse = await analyserTransaction(transaction);
+
     res.status(201).json({
-      message: "Transaction créée avec succès.",
-      transaction
+      message: "Transaction + Analyse créées.",
+      transaction,
+      analyse
     });
 
   } catch (error) {
-    console.error("Erreur createTransaction :", error);
-    res.status(400).json({
-      error: "Erreur lors de la création de la transaction.",
-      details: error.message
-    });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -169,4 +176,7 @@ export const deleteTransaction = async (req, res) => {
     });
   }
 };
+
+
+
 

@@ -5,7 +5,7 @@ export const validateCreateTransaction = [
   body("montant").isFloat({ min: 0 }).withMessage("montant >= 0"),
   body("dateTransaction").isISO8601().withMessage("dateTransaction invalide."),
   body("paysTransaction").notEmpty().withMessage("paysTransaction requis."),
-  body("statut").isIn(["APPROUVEE","REFUSEE","EN_ATTENTE"]).withMessage("statut invalide.")
+  body("statut").isIn(["valide","suspecte","frauduleuse"]).withMessage("statut invalide.")
 ];
 
 
@@ -14,7 +14,7 @@ export const validateUpdateTransaction = [
   body("montant").optional().isFloat({ min: 0 }),
   body("dateTransaction").optional().isISO8601(),
   body("paysTransaction").optional().isString(),
-  body("statut").optional().isIn(["APPROUVEE","REFUSEE","EN_ATTENTE"])
+  body("statut").optional().isIn(["valide","suspecte","frauduleuse"])
 ];
 
 
@@ -25,7 +25,7 @@ export const validateQueryTransaction = [
   query("maxMontant").optional().isFloat({ min: 0 }),
   query("dateFrom").optional().isISO8601(),
   query("dateTo").optional().isISO8601(),
-  query("statut").optional().isIn(["APPROUVEE","REFUSEE","EN_ATTENTE"])
+  query("statut").optional().isIn(["valide","suspecte","frauduleuse"])
 ];
 
 
