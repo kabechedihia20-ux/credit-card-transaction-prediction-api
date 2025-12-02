@@ -10,11 +10,14 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
 export const signup = async (req, res) => {
   try {
     const { nom, prenom, adresseEmail, telephone, motDePasse } = req.body;
+    console.log("BACKEND SIGNUP BODY:", req.body);
 
     const existing = await Utilisateur.findOne({ where: { adresseEmail } });
     if (existing) {
       return res.status(400).json({ error: "Un utilisateur avec cet email existe déjà." });
     }
+
+    console.log("BACKEND SIGNUP BODY:", req.body);
 
     const hashedPassword = await bcrypt.hash(motDePasse, 10);
 
@@ -48,6 +51,9 @@ export const login = async (req, res) => {
 
     const utilisateur = await Utilisateur.findOne({ where: { adresseEmail } });
 
+    console.log("UTILISATEUR CRÉÉ:", utilisateur);
+
+
     if (!utilisateur) {
       return res.status(401).json({ error: "Email ou mot de passe incorrect." });
     }
@@ -62,7 +68,12 @@ export const login = async (req, res) => {
       email: utilisateur.adresseEmail,
     };
 
+    console.log("UTILISATEUR CRÉÉ:", utilisateur);
+
+
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+    console.log("TOKEN: ", token)
 
     res.status(200).json({
       message: "Authentification réussie.",
