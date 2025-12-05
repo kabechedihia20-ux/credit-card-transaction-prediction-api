@@ -1,4 +1,5 @@
 import Utilisateur from "../models/Utilisateur.js";
+import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 
 
@@ -46,30 +47,49 @@ export const getUtilisateurs = async (req, res) => {
 
 // Créer un nouvel utilisateur
 export const createUtilisateur = async (req, res) => {
-try {
-  const data = req.body;
+  try {
+    const data = req.body;
 
-  // Si on reçoit un tableau → insertion multiple
-  if (Array.isArray(data)) {
-    const utilisateurs = await Utilisateur.bulkCreate(data);
-    res.status(201).json({
-      message: `${utilisateurs.length} utilisateurs créés avec succès.`,
-      utilisateurs,
-    });
-  } 
-  // Sinon → insertion unique
-  else {
+    // Si on reçoit un tableau → insertion multiple
+    if (Array.isArray(data)) {
+      // Hash pour chaque utilisateur du tableau
+      const utilisateursToCreate = await Promise.all(
+        data.map(async (u) => {
+          if (!u.motDePasse) throw new Error("Mot de passe manquant pour un utilisateur.");
+          u.motDePasse = await bcrypt.hash(u.motDePasse, 10);
+          return u;
+        })
+      );
+
+      const utilisateurs = await Utilisateur.bulkCreate(utilisateursToCreate);
+
+      return res.status(201).json({
+        message: `${utilisateurs.length} utilisateurs créés avec succès.`,
+        utilisateurs,
+      });
+    }
+
+    // Insertion unique
+    if (!data.motDePasse) {
+      return res.status(400).json({ error: "Mot de passe obligatoire." });
+    }
+
+    // Hash du mot de passe
+    data.motDePasse = await bcrypt.hash(data.motDePasse, 10);
+
     const utilisateur = await Utilisateur.create(data);
-    res.status(201).json({
+
+    return res.status(201).json({
       message: "Utilisateur créé avec succès.",
       utilisateur,
     });
-  }
-  }  catch (error) {
+
+  } catch (error) {
     console.error("Erreur createUtilisateur :", error);
-    res.status(400).json({ error: "Erreur lors de la création de l'utilisateur." });
+    return res.status(400).json({ error: "Erreur lors de la création de l'utilisateur." });
   }
 };
+
 
 // Obtenir un utilisateur par ID
 export const getUtilisateurById = async (req, res) => {
