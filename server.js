@@ -48,7 +48,7 @@ const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connexion à la base de données réussie");
-    await sequelize.sync();
+    await sequelize.sync({alter: true}); // Met à jour les tables si elles existent déjà.
 
     app.listen(port, () => {
       console.log(`Serveur démarré sur http://localhost:${port}`);

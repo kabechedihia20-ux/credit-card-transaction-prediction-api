@@ -40,7 +40,7 @@ const Analyse = sequelize.define(
     },
   },
   {
-    tableName: "Analyse",
+    tableName: "analyse",
     timestamps: false,
   }
 );
