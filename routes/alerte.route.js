@@ -1,12 +1,14 @@
 import express from "express";
-import { getAlertes } from "../controllers/alerte.controller.js";
+import { getAlertes, getAlerteById } from "../controllers/alerte.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
 const alerteRouter = express.Router();
 
 alerteRouter.get("/", verifyToken, getAlertes);
+alerteRouter.get("/:id", verifyToken, getAlerteById);
 
 export default alerteRouter;
+
 
 
 

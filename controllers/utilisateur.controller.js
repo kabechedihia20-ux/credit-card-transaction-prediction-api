@@ -108,21 +108,48 @@ export const getUtilisateurById = async (req, res) => {
 // Mettre à jour un utilisateur
 export const updateUtilisateur = async (req, res) => {
   try {
-    const [updated] = await Utilisateur.update(req.body, {
-      where: { idUtilisateur: req.params.id },
-    });
+    const utilisateur = await Utilisateur.findByPk(req.params.id);
 
-    if (!updated) {
+    if (!utilisateur) {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
     }
 
-    const utilisateur = await Utilisateur.findByPk(req.params.id);
+    const {
+      nom,
+      prenom,
+      adresseEmail,
+      telephone,
+      motDePasse,
+      newPassword
+    } = req.body;
+
+    let motDePasseFinal = utilisateur.motDePasse;
+
+    // Si un nouveau mot de passe est fourni → on le hash
+    if (newPassword && newPassword.trim() !== "") {
+      motDePasseFinal = await bcrypt.hash(newPassword, 10);
+    }
+    // Sinon, si l’ancien est fourni → on le garde (cas sécurité)
+    else if (motDePasse && motDePasse.trim() !== "") {
+      motDePasseFinal = motDePasse;
+    }
+
+    await utilisateur.update({
+      nom,
+      prenom,
+      adresseEmail,
+      telephone,
+      motDePasse: motDePasseFinal
+    });
+
     res.status(200).json(utilisateur);
+
   } catch (error) {
     console.error("Erreur updateUtilisateur :", error);
     res.status(400).json({ error: "Erreur lors de la mise à jour de l'utilisateur." });
   }
 };
+
 
 // Supprimer un utilisateur
 export const deleteUtilisateur = async (req, res) => {
